@@ -23,29 +23,29 @@ class AmazonSpider(scrapy.Spider):
     allowed_domains = ['www.amazon.com']
     base_url = 'https://www.amazon.com'
 
-    # def start_requests(self):
-    #     start_url = f'{self.base_url}/s?k=Disposable+Face+Mask&language=en_US'
-    #     yield Request(start_url, callback=self.parse_index)
-
     def start_requests(self):
-        # for i in range(2, 21):
-        #     asins_divs = response.xpath('//span[@data-component-type="s-search-results"]')
-        #     asins_div = asins_divs.xpath('//div[@data-asin]')
-        #     for div in asins_div:
-        #         asin = div.xpath('./@data-asin').get()
-        #         if asin:
-        #             detail_url = f'{self.base_url}/dp/{asin}?language=en_US'
-        #             if div.xpath('./data-component-type').get() == "s-search-result":
-        #                 asin_to_type = {'asin_type': 'search', 'asin': asin}
-        #             else:
-        #                 asin_to_type = {'asin_type': 'sponsored', 'asin': asin}
-        #             yield Request(detail_url, callback=self.parse_asin_detail, meta=asin_to_type, priority=2)
-        #
-        #     next_url = f'{self.base_url}/s?k=Disposable+Face+Mask&page={i}&language=en_US'
-        #     yield Request(next_url, callback=self.parse_index)
-        detail_url = f'{self.base_url}/dp/B09FJFHYCW?language=en_US'
-        asin_to_type = {'asin_type': 'search', 'asin': 'B08YPGJB4P'}
-        yield Request(detail_url, callback=self.parse_asin_detail, meta=asin_to_type, priority=2)
+        start_url = f'{self.base_url}/s?k=Disposable+Face+Mask&language=en_US'
+        yield Request(start_url, callback=self.parse_index)
+
+    def parse_index(self, response):
+        for i in range(2, 21):
+            asins_divs = response.xpath('//span[@data-component-type="s-search-results"]')
+            asins_div = asins_divs.xpath('//div[@data-asin]')
+            for div in asins_div:
+                asin = div.xpath('./@data-asin').get()
+                if asin:
+                    detail_url = f'{self.base_url}/dp/{asin}?language=en_US'
+                    if div.xpath('./data-component-type').get() == "s-search-result":
+                        asin_to_type = {'asin_type': 'search', 'asin': asin}
+                    else:
+                        asin_to_type = {'asin_type': 'sponsored', 'asin': asin}
+                    yield Request(detail_url, callback=self.parse_asin_detail, meta=asin_to_type, priority=2)
+
+            next_url = f'{self.base_url}/s?k=Disposable+Face+Mask&page={i}&language=en_US'
+            yield Request(next_url, callback=self.parse_index)
+        # detail_url = f'{self.base_url}/dp/B09FJFHYCW?language=en_US'
+        # asin_to_type = {'asin_type': 'search', 'asin': 'B08YPGJB4P'}
+        # yield Request(detail_url, callback=self.parse_asin_detail, meta=asin_to_type, priority=2)
 
     def parse_asin_detail(self, response):
 

@@ -127,7 +127,8 @@ class PyppeteerMiddleware(object):
             'Object.defineProperty(navigator,"webdriver",{get:() => undefined})')  # 隐藏webdriver属性
         await page.setViewport({'width': 1550, 'height': 850})
         pyppeteer_response = await page.goto(request.url)
-        await asyncio.sleep(5)
+        await asyncio.sleep(5)          # 此处应改为下方waitForSelector显式等待
+        # await page.waitForSelector(request.meta['Selector'])
         html = await page.content()
         pyppeteer_response.headers.pop('content-encoding', None)
         pyppeteer_response.headers.pop('content-Encoding', None)
